@@ -1,3 +1,9 @@
+GIT
+  remote: https://github.com/unnali/rouge
+  revision: 1488d60a355d0aad38bd65de0df8ea5fa8e7d6be
+  specs:
+    rouge (0.0.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -127,6 +133,7 @@ DEPENDENCIES
   haml-rails (>= 0.3.4)
   jquery-rails
   rails (= 3.2.8)
+  rouge!
   sass-rails (~> 3.2.3)
   sqlite3
   twitter-bootstrap-rails
