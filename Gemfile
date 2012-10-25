@@ -6,6 +6,7 @@ gem 'jquery-rails'
 gem 'haml-rails', '>= 0.3.4'
 gem 'twitter-bootstrap-rails'
 gem 'rouge', :git => 'https://github.com/unnali/rouge'
+gem 'fakefs', :require => 'fakefs/safe'
 
 group :assets do
   gem 'sass-rails', '~> 3.2.3'

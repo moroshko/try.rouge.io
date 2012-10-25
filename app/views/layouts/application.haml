@@ -5,4 +5,9 @@
     = stylesheet_link_tag "application", :media => "all"
     = javascript_include_tag "application"
     = csrf_meta_tags
-  %body= yield
+  %body
+    .container
+      .hero-unit
+        %h1 try.rouge.io
+
+      = yield
