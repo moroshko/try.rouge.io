@@ -49,3 +49,5 @@ class ShellController < ApplicationController
     $stdout.read
   end
 end
+
+# vim: set et sw=2 cc=80:
