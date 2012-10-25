@@ -11,6 +11,23 @@ $ ->
 
   entered = ""
 
+  process = (command) ->
+    $.ajax
+      url: "/shell/execute"
+      type: "POST"
+      data:
+        command: command
+      success: (result) ->
+        if result.ok
+          $('span.entry').before($("<span></span>").text(result.message))
+          $('span.entry').before("<br>")
+          $('span.entry').before("user=&gt; ")
+        else
+          $('span.entry').before("!?<br>")
+          $('span.entry').before($("<span></span>").text(result.error))
+          $('span.entry').before("<br>")
+          $('span.entry').before("user=&gt; ")
+
   updateEntry = ->
     resetCursor()
     $('span.entry').empty()
@@ -50,7 +67,14 @@ $ ->
       updateEntry()
       e.preventDefault()
     else if e.keyCode == 13
+      content = $('span.entry').html()
+      $('span.entry').before(content)
+      $('span.entry').before("<br>")
+      $('span.entry').html('')
+      command = entered
+      entered = ''
       e.preventDefault()
+      process(command)
     else if e.keyCode == 9
       entered += "\t"
       updateEntry()

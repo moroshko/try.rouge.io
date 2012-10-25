@@ -8,9 +8,9 @@ describe ShellController do
     end
   end
 
-  describe "GET 'execute'" do
+  describe "POST 'execute'" do
     it "returns http success" do
-      get 'execute'
+      post 'execute'
       response.should be_success
     end
   end
