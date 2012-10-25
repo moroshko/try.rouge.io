@@ -14,19 +14,35 @@ $ ->
   updateEntry = ->
     resetCursor()
     $('span.entry').empty()
-    e = entered
-    while e.length > 0
-      nextSpace = e.indexOf(" ")
-      if nextSpace == 0
+    paren = -1
+    string = false
+    quote = false
+    for c in entered
+      if c == " "
         $('span.entry').append("&nbsp;")
-        e = e.substr(1)
-      else if nextSpace > 0
-        $('span.entry').append($("<span></span>").text(e.substr(0, nextSpace)))
-        $('span.entry').append("&nbsp;")
-        e = e.substr(nextSpace + 1)
+      else if string
+        if quote
+          $('span.entry').append("<span class='string'>#{c}</span>")
+          quote = false
+        else if c == "\\"
+          $('span.entry').append("<span class='string'>\\</span>")
+          quote = true
+        else if c == "\""
+          $('span.entry').append("<span class='string'>\"</span>")
+          string = false
+        else
+          $('span.entry').append("<span class='string'>#{c}</span>")
+      else if c == "\""
+        $('span.entry').append("<span class='string'>\"</span>")
+        string = true
+      else if c == "("
+        paren += 1
+        $('span.entry').append("<span class='paren#{paren % 4}'>(</span>")
+      else if c == ")"
+        $('span.entry').append("<span class='paren#{paren % 4}'>)</span>")
+        paren -= 1
       else
-        $('span.entry').append(e)
-        e = ""
+        $('span.entry').append(c)
 
   $('body').keydown (e) ->
     if e.keyCode == 8
