@@ -38,7 +38,9 @@ class ShellController < ApplicationController
       FakeFS.deactivate!
     end
 
-    render :json => {:ok => true, :message => "#{stdout}#{Rouge.print(result, "".dup)}"}
+    render :json => {:ok => true,
+                     :stdout => stdout,
+                     :result => Rouge.print(result, "".dup)}
   end
 
   private

@@ -12,6 +12,7 @@
 
   height: 450px;
   overflow-y: scroll;
+  word-wrap: break-word;
 }
 
 .entry {
@@ -24,3 +25,19 @@
 .paren3 { color: yellow; }
 
 .string { color: magenta; }
+
+.error {
+  color: #f00;
+}
+
+.stdout, .result {
+  white-space: pre;
+}
+
+.stdout {
+  color: #aaa;
+}
+
+.prompt {
+  color: #0a0;
+}

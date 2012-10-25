@@ -1,54 +1,68 @@
 $ ->
   class Console
-    constructor: (@process) ->
+    constructor: (target, @process) ->
       @buffer = ""
       @cursorInterval = undefined
+
+      @$target = $(target)
+      @$target.keydown(@keydown)
+      @$target.keypress(@keypress)
+
+      @$cursor = $('span.cursor', @$target)
+      @$entry = $('span.entry', @$target)
+
       @resetCursor()
 
-    addChar: (c) ->
+    type: (c) ->
       @buffer += c
       @update()
 
+    append: (text) ->
+      @$entry.before(text)
+
     resetCursor: ->
       clearInterval(@cursorInterval) if @cursorInterval?
-      $('span.cursor').show()
-      @cursorInterval = setInterval( ->
-        $('span.cursor').toggle()
+      @$cursor.show()
+      @cursorInterval = setInterval( =>
+        @$cursor.toggle()
       , 1000)
 
     update: ->
       @resetCursor()
-      $('span.entry').empty()
+      @$entry.empty()
+
+      appendWithClass = (c, klass) =>
+        @$entry.append($("<span/>").text(c).addClass(klass))
 
       paren = -1
       string = false
       quote = false
       for c in @buffer
         if c == " "
-          $('span.entry').append("&nbsp;")
+          @$entry.append("&nbsp;")
         else if string
           if quote
-            $('span.entry').append("<span class='string'>#{c}</span>")
+            appendWithClass(c, "string")
             quote = false
           else if c == "\\"
-            $('span.entry').append("<span class='string'>\\</span>")
+            appendWithClass(c, "string")
             quote = true
           else if c == "\""
-            $('span.entry').append("<span class='string'>\"</span>")
+            appendWithClass(c, "string")
             string = false
           else
-            $('span.entry').append("<span class='string'>#{c}</span>")
+            appendWithClass(c, "string")
         else if c == "\""
-          $('span.entry').append("<span class='string'>\"</span>")
+          appendWithClass(c, "string")
           string = true
         else if c in ["(", "["]
           paren += 1
-          $('span.entry').append("<span class='paren#{paren % 4}'>#{c}</span>")
+          appendWithClass(c, "paren#{paren % 4}")
         else if c in [")", "]"]
-          $('span.entry').append("<span class='paren#{paren % 4}'>#{c}</span>")
+          appendWithClass(c, "paren#{paren % 4}")
           paren -= 1
         else
-          $('span.entry').append(c)
+          @$entry.append(c)
 
     keydown: (e) =>
       if e.keyCode == 8
@@ -57,16 +71,16 @@ $ ->
         @update()
       else if e.keyCode == 13
         e.preventDefault()
-        content = $('span.entry').html()
-        $('span.entry').before(content)
-        $('span.entry').before("<br>")
-        $('span.entry').html('')
-        command = @buffer
+        content = @$entry.html()
+        @append(content)
+        @append($("<br>"))
+        @$entry.html('')
+
+        @process(@buffer)
         @buffer = ''
-        @process(command)
       else if e.keyCode == 9
         e.preventDefault()
-        @addChar("\t")
+        @type("\t")
 
     keypress: (e) =>
       if e.which == 21
@@ -75,7 +89,7 @@ $ ->
         @update()
       else if e.which >= 32
         e.preventDefault()
-        @addChar(String.fromCharCode(e.which))
+        @type(String.fromCharCode(e.which))
 
   process = (command) ->
     $.ajax
@@ -85,16 +99,14 @@ $ ->
         command: command
       success: (result) ->
         if result.ok
-          $('span.entry').before($("<span></span>").text(result.message))
-          $('span.entry').before("<br>")
-          $('span.entry').before("user=&gt; ")
+          if result.stdout
+            console.append($("<span/>").addClass("stdout").text(result.stdout))
+          console.append($("<span/>").addClass("result").text(result.result))
+          console.append($("<br>"))
+          console.append($("<span/>").addClass("prompt").text("user=> "))
         else
-          $('span.entry').before("!?<br>")
-          $('span.entry').before($("<span></span>").text(result.error))
-          $('span.entry').before("<br>")
-          $('span.entry').before("user=&gt; ")
+          console.append($("<span/>").addClass("error").text(result.error))
+          console.append($("<br>"))
+          console.append($("<span/>").addClass("prompt").text("user=> "))
 
-  console = new Console(process)
-
-  $('body').keydown console.keydown
-  $('body').keypress console.keypress
+  console = new Console($('body'), process)
