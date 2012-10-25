@@ -7,6 +7,7 @@ gem 'twitter-bootstrap-rails'
 gem 'rouge', :git => 'https://github.com/unnali/rouge'
 gem 'fakefs', :require => 'fakefs/safe'
 gem 'pg'
+gem 'thin'
 
 group :assets do
   gem 'sass-rails', '~> 3.2.3'
