@@ -1,15 +1,81 @@
 $ ->
-  cursorInterval = undefined
-  resetCursor = ->
-    clearInterval(cursorInterval)
-    $('span.cursor').show()
-    cursorInterval = setInterval( ->
-      $('span.cursor').toggle()
-    , 1000)
+  class Console
+    constructor: (@process) ->
+      @buffer = ""
+      @cursorInterval = undefined
+      @resetCursor()
 
-  resetCursor()
+    addChar: (c) ->
+      @buffer += c
+      @update()
 
-  entered = ""
+    resetCursor: ->
+      clearInterval(@cursorInterval) if @cursorInterval?
+      $('span.cursor').show()
+      @cursorInterval = setInterval( ->
+        $('span.cursor').toggle()
+      , 1000)
+
+    update: ->
+      @resetCursor()
+      $('span.entry').empty()
+
+      paren = -1
+      string = false
+      quote = false
+      for c in @buffer
+        if c == " "
+          $('span.entry').append("&nbsp;")
+        else if string
+          if quote
+            $('span.entry').append("<span class='string'>#{c}</span>")
+            quote = false
+          else if c == "\\"
+            $('span.entry').append("<span class='string'>\\</span>")
+            quote = true
+          else if c == "\""
+            $('span.entry').append("<span class='string'>\"</span>")
+            string = false
+          else
+            $('span.entry').append("<span class='string'>#{c}</span>")
+        else if c == "\""
+          $('span.entry').append("<span class='string'>\"</span>")
+          string = true
+        else if c in ["(", "["]
+          paren += 1
+          $('span.entry').append("<span class='paren#{paren % 4}'>#{c}</span>")
+        else if c in [")", "]"]
+          $('span.entry').append("<span class='paren#{paren % 4}'>#{c}</span>")
+          paren -= 1
+        else
+          $('span.entry').append(c)
+
+    keydown: (e) =>
+      if e.keyCode == 8
+        e.preventDefault()
+        @buffer = @buffer.substr(0, @buffer.length - 1)
+        @update()
+      else if e.keyCode == 13
+        e.preventDefault()
+        content = $('span.entry').html()
+        $('span.entry').before(content)
+        $('span.entry').before("<br>")
+        $('span.entry').html('')
+        command = @buffer
+        @buffer = ''
+        @process(command)
+      else if e.keyCode == 9
+        e.preventDefault()
+        @addChar("\t")
+
+    keypress: (e) =>
+      if e.which == 21
+        e.preventDefault()
+        @buffer = ""
+        @update()
+      else if e.which >= 32
+        e.preventDefault()
+        @addChar(String.fromCharCode(e.which))
 
   process = (command) ->
     $.ajax
@@ -28,63 +94,7 @@ $ ->
           $('span.entry').before("<br>")
           $('span.entry').before("user=&gt; ")
 
-  updateEntry = ->
-    resetCursor()
-    $('span.entry').empty()
-    paren = -1
-    string = false
-    quote = false
-    for c in entered
-      if c == " "
-        $('span.entry').append("&nbsp;")
-      else if string
-        if quote
-          $('span.entry').append("<span class='string'>#{c}</span>")
-          quote = false
-        else if c == "\\"
-          $('span.entry').append("<span class='string'>\\</span>")
-          quote = true
-        else if c == "\""
-          $('span.entry').append("<span class='string'>\"</span>")
-          string = false
-        else
-          $('span.entry').append("<span class='string'>#{c}</span>")
-      else if c == "\""
-        $('span.entry').append("<span class='string'>\"</span>")
-        string = true
-      else if c == "("
-        paren += 1
-        $('span.entry').append("<span class='paren#{paren % 4}'>(</span>")
-      else if c == ")"
-        $('span.entry').append("<span class='paren#{paren % 4}'>)</span>")
-        paren -= 1
-      else
-        $('span.entry').append(c)
+  console = new Console(process)
 
-  $('body').keydown (e) ->
-    if e.keyCode == 8
-      entered = entered.substr(0, entered.length - 1)
-      updateEntry()
-      e.preventDefault()
-    else if e.keyCode == 13
-      content = $('span.entry').html()
-      $('span.entry').before(content)
-      $('span.entry').before("<br>")
-      $('span.entry').html('')
-      command = entered
-      entered = ''
-      e.preventDefault()
-      process(command)
-    else if e.keyCode == 9
-      entered += "\t"
-      updateEntry()
-      e.preventDefault()
-
-  $('body').keypress (e) ->
-    if e.which == 21
-      entered = ""
-    else if e.which < 32
-      return
-
-    entered += String.fromCharCode(e.which)
-    updateEntry()
+  $('body').keydown console.keydown
+  $('body').keypress console.keypress
