@@ -8,8 +8,9 @@ $ ->
       @$target.keydown(@keydown)
       @$target.keypress(@keypress)
 
-      @$cursor = $('span.cursor', @$target)
-      @$entry = $('span.entry', @$target)
+      @$console = $('.console', @$target)
+      @$cursor = $('span.cursor', @$console)
+      @$entry = $('span.entry', @$console)
 
       @resetCursor()
 
@@ -19,6 +20,7 @@ $ ->
 
     append: (text) ->
       @$entry.before(text)
+      @$console.stop().animate({ scrollTop: @$console[0].scrollHeight }, 100)
 
     resetCursor: ->
       clearInterval(@cursorInterval) if @cursorInterval?
