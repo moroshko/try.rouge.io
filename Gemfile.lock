@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/unnali/rouge
-  revision: ecc59cc497604b9c07afe76f75a11c9173425e12
+  revision: c0c6347c3fa71f03a0cab9492dd2ff229c5506e2
   specs:
     rouge (0.0.1)
 
