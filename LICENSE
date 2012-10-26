@@ -1,16 +1,4 @@
-# try.rouge.io [![Build Status](https://secure.travis-ci.org/unnali/try.rouge.io.png)](http://travis-ci.org/unnali/try.rouge.io)
-
-A low-barrier way to toy with [Rouge](http://rouge.io).
-
-## authorship
-
-Original author: [Arlen Christian Mart Cuss](https://github.com/unnali).
-
-## copyright and licensing
-
-The [MIT license](http://opensource.org/licenses/MIT).
-
-Copyright &copy; 2012 Arlen Christian Mart Cuss
+Copyright (c) 2012 Arlen Christian Mart Cuss
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
