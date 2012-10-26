@@ -1,6 +1,6 @@
 .console {
-  background: #000;
-  color: #ccc;
+  background: #002b36;
+  color: #93a1a1;
 
   border: 1px solid #000;
   border-radius: 5px;
@@ -16,15 +16,16 @@
 }
 
 .entry {
-  color: #fff;
+  color: #eee8d5;
 }
 
-.paren0 { color: red; }
-.paren1 { color: green; }
-.paren2 { color: blue; }
-.paren3 { color: yellow; }
+.paren0 { color: #dc322f; }
+.paren1 { color: #dc322f; }
+.paren2 { color: #dc322f; }
+.paren3 { color: #dc322f; }
 
-.string { color: magenta; }
+.string { color: #2aa198; }
+.number { color: #2aa198; }
 
 .error {
   color: #f00;
@@ -35,9 +36,9 @@
 }
 
 .stdout {
-  color: #aaa;
+  color: #eee8d5;
 }
 
 .prompt {
-  color: #0a0;
+  color: #859900;
 }

@@ -74,7 +74,7 @@ $ ->
       else if e.keyCode == 13
         e.preventDefault()
         content = @$entry.html()
-        @append(content)
+        @append($("<span/>").addClass("stdout").html(content))
         @append($("<br>"))
         @$entry.html('')
 
@@ -94,6 +94,10 @@ $ ->
         @type(String.fromCharCode(e.which))
 
   process = (command) ->
+    if command.replace(/\s+/g, '').length == 0
+      console.append($("<span/>").addClass("prompt").text("user=> "))
+      return
+
     $.ajax
       url: "/shell/execute"
       type: "POST"
