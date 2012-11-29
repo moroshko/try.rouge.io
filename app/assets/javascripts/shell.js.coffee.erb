@@ -93,7 +93,11 @@ $ ->
         e.preventDefault()
         @type(String.fromCharCode(e.which))
 
+  latestResult = 'nil'
+
   process = (command) ->
+    command = command.replace(/\b_\b/g, latestResult)
+
     if command.replace(/\s+/g, '').length == 0
       console.append($("<span/>").addClass("prompt").text("user=> "))
       return
@@ -105,6 +109,8 @@ $ ->
         command: command
       success: (result) ->
         if result.ok
+          latestResult = result.result
+
           if result.stdout
             console.append($("<span/>").addClass("stdout").text(result.stdout))
           console.append($("<span/>").addClass("result").text(result.result))
